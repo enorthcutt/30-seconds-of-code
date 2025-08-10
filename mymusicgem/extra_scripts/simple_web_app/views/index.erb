@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mymusicgem Web Demo</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; line-height: 1.5; }
+    form { margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 8px; }
+    label { display: block; margin-bottom: .5em; font-weight: bold; }
+    input[type="text"], textarea { width: 90%; max-width: 600px; padding: 8px; margin-bottom: 1em; border: 1px solid #ddd; border-radius: 4px; }
+    input[type="submit"] { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .result { background-color: #f0f0f0; padding: 1em; border-radius: 5px; margin-top: 1em; white-space: pre-wrap; word-break: break-word; }
+    .error { color: red; font-weight: bold; background-color: #fee; padding: 1em; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Mymusicgem Web Demo</h1>
+
+  <% if @error %>
+    <div class="error">
+      <h3>Error:</h3>
+      <pre><%= @error %></pre>
+    </div>
+  <% end %>
+
+  <form action="/generate_lyrics" method="post">
+    <h2>Generate Lyrics</h2>
+    <label for="prompt">Prompt for Lyrics:</label>
+    <textarea id="prompt" name="prompt" rows="4" required>Write a short, catchy chorus for a pop song about summer love</textarea><br>
+    <input type="submit" value="Generate Lyrics">
+  </form>
+
+  <form action="/generate_vocals" method="post">
+    <h2>Generate Vocals (Audio)</h2>
+    <p><strong>Note:</strong> Requires `GOOGLE_APPLICATION_CREDENTIALS` to be set.</p>
+    <label for="vocals_text">Text for Vocals:</label>
+    <textarea id="vocals_text" name="text" rows="2" required>Oh, the summer breeze, it sings to me.</textarea><br>
+    <label for="vocals_voice">Voice Name (e.g., en-US-Wavenet-F, see <a href="https://cloud.google.com/text-to-speech/docs/voices" target="_blank">Google Cloud Voices</a>):</label>
+    <input type="text" id="vocals_voice" name="voice_name" value="en-US-Standard-C"><br>
+    <input type="submit" value="Generate Vocals">
+  </form>
+
+  <% if @result %>
+    <div class="result">
+      <h3>Result:</h3>
+      <p><%= @result %></p>
+      <% if @audio_link %>
+        <p>
+          <audio controls src="<%= @audio_link %>">
+            Your browser does not support the audio element.
+          </audio>
+        </p>
+        <p><a href="<%= @audio_link %>" download>Download Audio</a></p>
+      <% end %>
+    </div>
+  <% end %>
+
+</body>
+</html>

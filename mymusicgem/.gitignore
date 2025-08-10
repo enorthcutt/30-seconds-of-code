@@ -1,0 +1,8 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore local gem installations.
+/vendor/bundle
+
+# Ignore generated files.
+/spec/fixtures/audio_files/
