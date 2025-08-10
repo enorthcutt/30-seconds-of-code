@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path('../../lib', __dir__)
+require 'mymusicgem'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: mymusicgem [command] [options]"
+
+  opts.on("-o", "--output FILE", "Output file for generated content") do |file|
+    options[:output] = file
+  end
+
+  opts.on("--voice-lang LANG", "Voice language code (e.g., en-US)") do |lang|
+    options[:voice_lang] = lang
+  end
+
+  opts.on("--voice-name NAME", "Voice name (e.g., en-US-Wavenet-F)") do |name|
+    options[:voice_name] = name
+  end
+end.parse!
+
+command = ARGV.shift
+client = Mymusicgem.client
+
+begin
+  case command
+  when "generate-text"
+    raise "Prompt required" if ARGV.empty?
+    puts client.generate_content(ARGV.join(" ")).text
+  when "generate-vocals"
+    raise "Output file required: --output FILE" unless options[:output]
+    raise "Text required" if ARGV.empty?
+    voice_config = { language_code: options[:voice_lang], name: options[:voice_name] }.compact
+    client.generate_vocals(ARGV.join(" "), options[:output], voice_config)
+    puts "Vocals generated at: #{options[:output]}"
+  when "analyze-image"
+    raise "Image file and prompt required" if ARGV.size < 2
+    puts client.analyze_image(ARGV[0], ARGV[1..-1].join(" ")).text
+  when "analyze-audio"
+    raise "Audio file required" if ARGV.empty?
+    puts client.analyze_audio_metadata(ARGV[0]).text
+  else
+    puts "Unknown command: #{command}"
+    puts "Available commands: generate-text, generate-vocals, analyze-image, analyze-audio"
+  end
+rescue Mymusicgem::Error, StandardError => e
+  puts "Error: #{e.message}"
+  exit 1
+end

@@ -1,0 +1,21 @@
+development:
+  api_base: https://generativelanguage.googleapis.com/v1
+  timeout: 30
+  model: gemini-pro
+  temperature: 0.7
+  max_tokens: 1024
+  logger_level: info
+  tts_config:
+    language_code: en-US
+    name: en-US-Standard-C
+
+test:
+  api_base: https://generativelanguage.googleapis.com/v1
+  timeout: 5
+  model: gemini-pro
+  temperature: 0.7
+  max_tokens: 10
+  logger_level: error
+  tts_config:
+    language_code: en-US
+    name: en-US-Standard-C
